@@ -1,0 +1,30 @@
+@charset "utf-8";
+body,div,ul,li,dl,dd,table,p,h1,form,legend,fieldset,input button,select,textarea,button{margin:0px;padding:0px;font-family:inherit;font-size:inherit; font:14px/1.5   "Lucida Grande","Lucida Sans Unicode","STHeiti","Helvetica","Arial","Verdana","微软雅黑","sans-serif";}
+body{overflow-y:hidden;}
+ul,li{list-style:none;}
+.line10px{clear:both; display:block; height:10px; line-height:10px;}
+.line20px{clear:both; display:block; height:20px; line-height:20px;}
+a{color:#253E72;text-decoration:none;}
+a:hover{color:#0091D4;text-decoration:none;}
+input.inputstyle{width:380px; height:30px; padding:10px 10px 10px 10px; border:1px #ACACAC solid; border-radius:5px; background:#EBF5F7;}
+input.inputuser{width:350px;padding-left:40px; background: #EBF5F7 url(../images/user.png) no-repeat 7px 15px;}
+input.inputpassword{width:350px;padding-left:40px; background: #EBF5F7 url(../images/password.png) no-repeat 10px 15px;}
+div.inputema{position:relative;}
+div.inputema img{position:absolute; right: -1px; top: 2px;border-top-right-radius: 5px;border-bottom-right-radius: 5px;}
+body{background:url(../images/loginbg.jpg) no-repeat center;}
+.divLoginbox{width:980px; margin:0 auto; margin-top:10%; height:330px;}
+.divLoginbox .logo{float:left; margin-top: 120px;margin-right: 30px;}
+.divLoginbox .loginform{float:left; width:500px; padding:15px; height:250px; border-radius:5px;background: rgba(255,255,255,.3);}
+.divLoginbox .loginform2{width:500px; height: 225px; background:#FFF; padding-top: 25px;}
+.divLoginbox .loginform2 .forms{width:400px; margin:0 auto;}
+.divLoginbox .loginbtn{float:left; margin-top:120px; margin-left: 30px; height:85px; width:143px; background:url(../images/loginbtn01.png) no-repeat center; cursor:pointer;}
+.divLoginbox .loginbtn:hover{background:url(../images/loginbtn02.png) no-repeat;}
+
+.divfooter{width:100%; height:150px; background:rgba(119, 110, 110, 0.3); position:absolute; bottom:0px;}
+.divfooter .foterbox{width:540px; margin:0 auto; top: 25px;height: 150px;position: relative;}
+.divfooter .foterbox ul li{float:left; width:79px; height:156px; text-align: center;padding-top: 90px; margin-left:55px;}
+.divfooter .foterbox ul li a{color:#fff;}
+.divfooter .foterbox ul li.ico01{background:url(../images/ico01.png) no-repeat;}
+.divfooter .foterbox ul li.ico02{background:url(../images/ico02.png) no-repeat;}
+.divfooter .foterbox ul li.ico03{background:url(../images/ico03.png) no-repeat;}
+.divfooter .foterbox ul li.ico04{background:url(../images/ico04.png) no-repeat;}

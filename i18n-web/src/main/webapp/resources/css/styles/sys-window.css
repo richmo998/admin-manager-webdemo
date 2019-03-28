@@ -1,0 +1,74 @@
+table {
+	font-size: 12px;
+}
+
+#fm {
+	margin: 0;
+	padding: 10px 30px;
+}
+
+.ftitle {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 0;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+	margin-bottom: 5px;
+}
+
+.fitem label {
+	display: inline-block;
+	width: 80px;
+}
+
+#select1,#select2 {
+	width: 158px;
+	margin: -4px;
+	padding: 5px;
+}
+
+.sel-div {
+	border: 1px solid #ccc;
+	width: 150px;
+	overflow: hidden;
+}
+
+.a-up,.a-down {
+	display: block;
+	border: 1px solid #ccc;
+	text-decoration: none;
+	width: 150px;
+	background: #F2F2F2;
+	text-align: center;
+	height: 25px;
+	line-height: 25px;
+	cursor: pointer;
+	letter-spacing: 2px;
+	zoom: 1;
+}
+
+.a-up {
+	border-bottom: none;
+}
+
+.a-down {
+	border-top: none;
+}
+
+.a-right,.a-left {
+	display: block;
+	border: 1px solid #ccc;
+	width: 100px;
+	height: 25px;
+	line-height: 25px;
+	background: #F2F2F2;
+	margin: 15px;
+	cursor: pointer;
+}
+
+.a-left {
+	margin-top: 20px;
+}

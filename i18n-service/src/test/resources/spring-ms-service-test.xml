@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- 扫描base -->
+	<!-- Activates scanning of @Service -->
+	<context:component-scan base-package="com.yougou.logistics.base.service">
+		<context:include-filter type="regex" expression="com.yougou.logistics.base.service.util.*"/>
+		<context:exclude-filter type="regex" expression="com.yougou.logistics.base.service.quartz.*"/>
+		<context:exclude-filter type="regex" expression="com.yougou.logistics.base.service.aop.VpdHandler"/>
+	</context:component-scan>
+	
+	<!-- 扫描本工程bean-->
+	<context:component-scan base-package="com.wonhigh.i18n.ms.service"/>
+
+	<!-- 加载依赖dal层配置 -->
+	<import resource="classpath:META-INF/spring-ms-dal.xml" />
+
+	<!-- 加载测试特有的spring配置 -->
+	<!-- <import resource="classpath:spring-ms-service-core-test.xml" /> -->
+	
+	<!-- 加载base工程配置 -->
+	<import resource="classpath:META-INF/spring-base-jms.xml" />
+	<!-- queue 队列定义 -->
+	<bean id="destinationTriggers" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg
+				value="cn.wonhigh.sms.TriggersMsgConsumer.queue"></constructor-arg>
+	</bean>
+	
+	<!-- <amq:queue name="destination" physicalName="destinationTriggers" />  -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<bean class="org.springframework.jms.connection.SingleConnectionFactory">
+				<property name="targetConnectionFactory" ref="jmsConnectionFactory" />
+			</bean>
+		</property>
+
+	</bean>
+	
+	<bean id="productorTest" class="com.wonhigh.i18n.ms.service.test.ProductorTest">
+		 <property name="template" ref="jmsTemplate" /> 
+   		 <property name="destination" ref="destinationTriggers" /> 
+		
+	</bean>
+
+</beans>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<!-- 增加d:/yougouconf/mybatis-ibator-conf.properties文件，并增加oracle .jar.path变量 
+		如:oracle.jar.path=D:/lipsion/repository/com/oracle/ojdbc5/11.1.0.7.0/ojdbc5-11.1.0.7.0.jar 
+		最新的配置文件，大家可以在 svn://10.0.30.57:9999/logistics-lsp/trunk/logistics-lsp/conf或更新最新的代码后在conf/目录下复制mybatis-ibator-conf.properties 
+		<classPathEntry location="${oracle.jar.path}" /> <properties url="file:///d:/yougouconf/mybatis-ibator-conf.properties"/> -->
+	<context id="context1" targetRuntime="MyBatis3">
+
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://127.0.0.1:3306/dc_sms?useUnicode=true&amp;characterEncoding=UTF-8"
+			userId="dc_sms" password="dc_sms" /><!--dbmsType属性可选 为空 根据驱动选择对应的数据库类型，否则按指定的数据库 
+			支持mysql、oracle -->
+		
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+			<!-- 只有一个属于forceBigDecimals，默认false。如果字段精确超过0，生成BigDecimal 如果字段精确是0，总长度10-18生成Long; 
+				如果字段精确是0，总长5-9生成Integer; 如果字段精确是0，总长小于5生成Short; 如果forceBigDecimals为true,统一生成BigDecimal -->
+		</javaTypeResolver>
+		
+		<javaModelGenerator targetPackage="com.wonhigh.i18n.ms.common.model"
+			targetProject="i18n-common">
+			<property name="rootInterface" value="java.io.Serializable" /> <!-- model实现序列化接口 -->
+		</javaModelGenerator>
+		<sqlMapGenerator targetPackage="mapper"
+			targetProject="i18n-dal/src/main/resources" />
+		<javaClientGenerator targetPackage="com.wonhigh.i18n.ms.dal.database"
+			targetProject="i18n-dal" type="XMLMAPPER">
+			<property name="interfaceExtendSupInterface"
+				value="com.yougou.logistics.base.dal.database.BaseCrudMapper" />
+			<property name="enableInterfaceSupInterfaceGenericity"
+				value="false" />
+			<property name="exclusionsMethods"
+				value="countByQuery,deleteByQuery,deleteByPrimaryKey,insert,insertSelective,selectByQuery,selectByQueryWithBLOBs,selectByPrimaryKey,selectCount,selectByPage,updateByQuery,updateByQueryWithBLOBs,updateByPrimaryKeySelective,updateByPrimaryKeyWithBLOBs" />
+		</javaClientGenerator>
+
+		<sqlMapConfigFileAppend targetPackage="META-INF"
+			targetProject="i18n-dal/src/main/resources" confileFileName="mybatis-ms-dal-config.xml"
+			confileFilePackagePath="mapper" />
+
+		<javaServiceGenerator targetPackage="com.wonhigh.i18n.ms.service"
+			targetProject="i18n-service" interfaceExtendSupInterface="com.yougou.logistics.base.service.BaseCrudService"
+			enableInterfaceSupInterfaceGenericity="false"
+			extendSupClass="com.yougou.logistics.base.service.BaseCrudServiceImpl"
+			enableSupClassGenericity="false" />
+
+		<javaManagerGenerator targetPackage="com.wonhigh.i18n.ms.manager"
+			targetProject="i18n-manager" interfaceExtendSupInterface="com.yougou.logistics.base.manager.BaseCrudManager"
+			enableInterfaceSupInterfaceGenericity="false"
+			extendSupClass="com.yougou.logistics.base.manager.BaseCrudManagerImpl"
+			enableSupClassGenericity="false" />
+
+		<javaControllerGenerator targetPackage="com.wonhigh.i18n.ms.web.controller"
+			targetProject="i18n-web"
+			extendSupClass="com.yougou.logistics.base.web.controller.BaseCrud4RestfulController"
+			enableSupClassGenericity="true" />
+		<!-- <table schema="dev1" tableName="logistics_base" domainObjectName="LogisticsBase" 
+			enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" 
+			enableSelectByExample="false" selectByExampleQueryId="false"> <columnOverride 
+			column="BASE_ID" javaType="Long"></columnOverride> </table> -->
+
+		<tableSetting isSchema="true" enableCountByExample="false"
+			enableUpdateByExample="false" enableDeleteByExample="false"
+			enableSelectByExample="false" selectByExampleQueryId="false">
+			<prop name="replaceTablePrefix">
+				<list>
+					<prefix name="t_" value="" />
+				</list>
+			</prop>
+			<!-- 忽略schema，避免在xml中出现schema.表名 -->
+			<prop name="ignoreGeneratorSchema" value="true" />
+		</tableSetting>
+
+	</context>
+</generatorConfiguration>

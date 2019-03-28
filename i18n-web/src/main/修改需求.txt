@@ -1,0 +1,180 @@
+o2o-ms-0.6.0修改细节：
+当前存在的问题：
+1.高优先级的短信要求实时发送，当前还有12秒左右的延迟；——需要改流程，在创建消息时，对高优先级的需求，先发送，再写入数据表；
+
+2.邮件发送时，接收列表有错误邮件地址，即全部发送失败；——需要在发送前，对邮件接收地址做检查，判断接收地址是否真实存在；
+
+3.短信消息的接收手机，没有在创建时进行规则帅选；——需要在创建时做规则帅选，避免重号、规则上就是一个错误号码等；
+
+4.web显示方面的需求；
+
+5.继续详细记载发送错误的错误类别的含义；——要求梦网提供完整的返回码对应的错误类别；
+
+6.增加短信调用发送端口成功，但接收手机关机或手机故障，导致无法获得状态回执的记录处理；——隔一定时间移送到历史表，删除历史表时，不删除；
+
+修改如下：
+一、数据库方面改动
+1.修改表名：t_sms_send_msg_status为t_sms_send_status；
+2.修改表名：t_sms_send_msg_sub 为 t_sms_receiver;
+3.修改表名：t_sms_send_msg_sub_his 为 t_sms_receiver_his;
+4.修改表名：t_email_send_msg_sub 为 t_email_receiver;
+5.修改表名：t_email_send_msg_sub_his 为 t_email_receiver_his;
+6.增加字段：t_email_receiver和t_email_receiver_his增加字段valid，1-表示有效，0-表示无效；
+
+相关Sql如下：
+rename table t_sms_send_msg_status to t_sms_send_status;
+
+rename table t_sms_send_msg_sub to t_sms_receiver;
+rename table t_sms_send_msg_sub_his to t_sms_receiver_his;
+
+rename table t_email_send_msg_sub to t_email_receiver;
+rename table t_email_send_msg_sub_his to t_email_receiver_his;
+
+
+ALTER TABLE t_email_receiver ADD valid TINYINT  DEFAULT '1'  COMMENT '是否有效,1-有效,0-无效';
+ALTER TABLE t_email_receiver_his ADD valid TINYINT  DEFAULT '1'  COMMENT '是否有效,1-有效,0-无效';
+
+主机一：修改配置o2o-ms.properties：
+sms.send.schedule.time=0/10 * *  * * ?
+sms.status.schedule.time=0/10 * *  * * ?
+sms.del.schedule.time=0 59 23 * * ?
+sms.send.timeout=1
+
+email.commond.schedule.time=0/10 * *  * * ?
+email.recovery.schedule.time=0/10 * *  * * ?
+email.del.schedule.time=0 59 23 * * ?
+email.send.timeout=1
+
+主机二：修改配置o2o-ms.properties：
+sms.send.schedule.time=5/10 * *  * * ?
+sms.status.schedule.time=5/10 * *  * * ?
+sms.del.schedule.time=30 59 23 * * ?
+sms.send.timeout=1
+
+email.commond.schedule.time=5/10 * *  * * ?
+email.recovery.schedule.time=5/10 * *  * * ?
+email.del.schedule.time=30 59 23 * * ?
+email.send.timeout=1
+
+以上配置略有不同，为了错开定时器启动时间，从而实现更及时响应
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+o2o-ms-0.5.0修改细节：
+
+当前存在的问题：
+1.发送响应时间太长；				——轮巡不退出或间断性退出
+3.发送失败后，恢复周期太长；			——检查到失败，立即恢复
+2.若记录很多的情况下，程序每5分钟发100条，发完退出，效率太低，如果记录多，有可能永远发不完；——轮巡不退出或间断性退出
+3.多主机同时发，存在抢数据，重发的情况；	——增加发送主机标识
+4.发送失败，错误消息会被重置；			——按移动流水号保存记录，不覆盖
+5.不支持定时发送；					——轮巡扫描，支持定时发送
+6.发送卡死在接口
+
+SMS账号配置如下：10.240.251.5/10.240.251.6
+#生产环境账户
+#send mobile message parameters
+#sendSmsMsg.url=http://61.130.7.220:8023/MWGate/wmgw.asmx?wsdl
+#sendSmsMsg.username=J51199
+#sendSmsMsg.password=569385
+#sendSmsMsg.sendPhone=10690709256610
+#运维账户
+#sendSmsMsg.url=http://61.145.229.29:9006/MWGate/wmgw.asmx?wsdl
+#sendSmsMsg.username=J02963
+#sendSmsMsg.password=269860
+#sendSmsMsg.sendPhone=10690329066108
+#研发部测试账户
+sendSmsMsg.url=http://61.130.7.220:8023/MWGate/wmgw.asmx?wsdl
+sendSmsMsg.username=J51790
+sendSmsMsg.password=556923
+sendSmsMsg.sendPhone=10690329066106
+
+
+
+修改代码清单如下：
+1.修改配置文件o2o-ms.properties：
+1).增加配置：网点号(sendSmsMsg.hostName)，作为网点的唯一标识；
+2).增加配置：发送超时时间(sendSmsMsg.timeout)，作为发送短信线程检查状态为1，但超时为更新状态的记录
+
+增加项：
+o2o.ms.hostName=host01		#主机名
+email.send.timeout=5		#email超时时间，分钟
+sms.send.timeout=5			#sms超时时间，分钟
+
+
+
+2.数据库修改：
+1).修改`t_sms_send_msg_sub`表，增加字段：“网点号(operator,填写配置hostName)”；
+ALTER TABLE t_sms_send_msg_sub ADD operator VARCHAR(50) COMMENT '操作节点';
+ALTER TABLE t_sms_send_msg_sub MODIFY create_time DATETIME NOT NULL COMMENT '入库时间';
+ALTER TABLE t_sms_send_msg_sub_his ADD operator VARCHAR(50) COMMENT '操作节点';
+ALTER TABLE t_sms_send_msg_sub_his MODIFY create_time DATETIME NOT NULL COMMENT '入库时间';
+
+2).修改`t_sms_send_msg_status`表，增加字段：“网点号(operator,填写配置hostName)”；
+ALTER TABLE t_sms_send_msg_status ADD operator VARCHAR(50) COMMENT '操作节点';
+
+3).修改t_email_send_msg，增加字段：“网点号(operator,填写配置hostName)”；
+ALTER TABLE t_email_send_msg ADD operator VARCHAR(50) COMMENT '操作节点';
+ALTER TABLE t_email_send_msg_his ADD operator VARCHAR(50) COMMENT '操作节点';
+
+4).修改t_sms_send_msg表，短信长度设置为360，移动梦网短信支持到350，程序接口中增加长度判断，不得超过350；
+ALTER TABLE t_sms_send_msg MODIFY msg_info VARCHAR(360) COMMENT '短信内容';
+ALTER TABLE t_sms_send_msg_his MODIFY msg_info VARCHAR(360) COMMENT '短信内容';
+
+3.实体类修改：
+1).修改com.wonhigh.i18n.ms.common.model.SmsSendMsgStatus,增加属性：private String operator;
+2).修改com.wonhigh.i18n.ms.common.model.SMSReceiverEntity,增加属性：private String operator;
+3).修改com.wonhigh.i18n.ms.common.model.SMSReceiverHisEntity，继承com.wonhigh.i18n.ms.common.model.SMSReceiverEntity；
+4).修改com.wonhigh.i18n.ms.common.model.SMSSendHisEntity，继承com.wonhigh.i18n.ms.common.model.SMSSendEntity；
+5).修改com.wonhigh.i18n.ms.common.model.EmailSendEntity，增加属性：private String operator;
+6).修改EmailSendHisEntity和EmailReceiverHisEntity，改成继承当前对应的类；
+
+
+4.dal层修改：
+1).修改SMSSendMapper.xml,增加字段：operator相关；
+2).修改SMSSendHisMapper.xml，增加字段：serialNumber，operator相关；
+3).修改SmsSendMsgStatusMapper.xml,增加字段：operator相关；
+4).SMSSendMapper.java增加：countSms、countSmsSub、updateReceiverStatus4Send等方法；
+5).SMSSendHisMapper.java增加：countHis、countHisSub等方法；
+6).EmailSendMapper.java增加：updateStatus4Send、updateEmailReceiverRecord等方法；  
+7).EmailSendHisMapper.java增加：countHis、countHisSub等方法；
+以上service层做相应增加该方法。
+
+5.manager层定时器程序修改：
+1).修改发送短信状态变化：0-初始状态；
+					1-某网点锁定了该记录，待发送；
+					2-该网点调用发送端口成功；
+					3-该网点调用发送端口失败；
+					4-某网点锁定了该记录，准备查询发送状态；
+					5-发送成功；
+					9-发送失败；
+	public static final Integer SEND_SMS_STATUS_INIT = 0;
+	public static final Integer SEND_SMS_STATUS_WAIT = 1;
+	public static final Integer SEND_SMS_STATUS_CALL_SUCCESS = 2;
+	public static final Integer SEND_SMS_STATUS_CALL_FAIL = 3;
+	public static final Integer SEND_SMS_STATUS_WAIT_RETURN = 4;
+	public static final Integer SEND_SMS_STATUS_RETURN_SUCCESS = 5;
+	public static final Integer SEND_SMS_STATUS_RETURN_FAIL = 9;
+
+2).增加service方法
+					
+3).修改发送短信事务；
+
+4).修改查询移动梦网状态的事务；
+
+5).删除更新状态等失效事务；
+
+6).完成定时发送功能
+
+7).增加短信长度校验，短信内容不能超过350个字符。

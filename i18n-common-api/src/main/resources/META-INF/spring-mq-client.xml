@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	
+	<!-- 加载base工程配置
+	<import resource="classpath:META-INF/spring-base-service.xml"/>
+	 -->
+	 
+	 <import resource="classpath:META-INF/spring-base-jms.xml" />
+	 
+	<!-- 加载依赖dal层配置 -->
+	<!-- <import resource="classpath:META-INF/spring-springmvc-dal.xml" /> -->
+	<!-- <import resource="classpath:META-INF/spring-ms-dubbo-client.xml" /> -->
+	
+	<!-- 扫描本工程bean-->
+	<context:component-scan base-package="com.wonhigh.i18n.common.api.service.mq">
+	</context:component-scan>
+	<!-- <mvc:annotation-driven /> -->
+	
+	<import resource="classpath:META-INF/spring-base-jms.xml" />
+	<!-- queue 队列定义 -->
+	<bean id="destinationClient" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg
+				value="cn.wonhigh.sms.TriggersMsgConsumer.queue"></constructor-arg>
+	</bean>
+	
+	<!-- <amq:queue name="destination" physicalName="destinationTriggers" />  -->
+	<bean id="templateClient" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory">
+			<bean class="org.springframework.jms.connection.SingleConnectionFactory">
+				<property name="targetConnectionFactory" ref="jmsConnectionFactory" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="productor" class="com.wonhigh.i18n.common.api.service.mq.Productor">
+		<property name="destination" ref="destinationClient" />
+		<property name="template" ref="templateClient" />
+	</bean>
+
+	
+</beans>

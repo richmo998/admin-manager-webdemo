@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wonhigh.i18n.ms.dal.database.UserMapper">
+	<resultMap id="BaseResultMap" type="com.wonhigh.i18n.ms.common.model.UserEntity">
+		<id column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="login_name" property="loginName" jdbcType="VARCHAR" />
+		<result column="user_pwd" property="userPwd" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="TINYINT" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="user_type" property="userType" jdbcType="TINYINT" javaType="Integer"/>
+		<result column="role_id" property="roleId" jdbcType="TINYINT" javaType="Integer"/>
+		<result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		user_id,
+		user_name,
+		user_pwd,
+		status,
+		remark,
+		create_time,
+		update_time,
+		user_type,
+		role_id
+	</sql>
+
+	<sql id="condition">
+		<if test="null!=params">
+			<if test="null!=params.queryCondition and ''!=params.queryCondition">
+				${params.queryCondition}
+			</if>
+			<if test="params.userName != null and params.userName !=''">
+				and user_name like CONCAT(CONCAT('%',
+				#{params.userName,jdbcType=DECIMAL}), '%')
+			</if>
+			<if test="params.userId != null and params.userId !=''">
+				and user_id like CONCAT(CONCAT('%', #{params.userId,jdbcType=DECIMAL}),
+				'%')
+			</if>
+			<if test="params.user_id != null and params.user_id  !=''">
+				and user_id = #{params.user_id,jdbcType=DECIMAL}
+			</if>
+			<if test="params.status != null and params.status !=''">
+				and status = #{params.status,jdbcType=DECIMAL}
+			</if>
+			<if test="params.createTime != null and params.createTime != ''">
+				and update_time <![CDATA[>= ]]>
+				#{params.createTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="params.updateTime != null and params.updateTime != ''">
+				and update_time <![CDATA[<= ]]>
+				#{params.updateTime,jdbcType=TIMESTAMP}
+			</if>
+		</if>
+	</sql>
+
+	<select id="listPhone" resultMap="BaseResultMap" parameterType="map">
+		SELECT phone
+		FROM t_user
+		WHERE 1=1 AND phone IS NOT NULL
+	</select>
+
+	<!-- BaseCrud:Service.findById -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM t_user
+		WHERE user_id = #{userId,jdbcType=INTEGER}
+	</select>
+
+	<!--BaseCrud:Service.findCount -->
+	<select id="selectCount" resultType="java.lang.Integer">
+		SELECT COUNT(1) as s FROM t_user WHERE 1=1
+		<include refid="condition" />
+	</select>
+	<!--BaseCrud:findByPage -->
+	<select id="selectByPage" resultMap="BaseResultMap"
+			parameterType="map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM t_user WHERE 1=1
+		<include refid="condition" />
+		<if test="orderByField != null and ''!=orderByField">
+		ORDER BY ${orderByField}
+		<if test="orderByField">
+		${orderBy}
+		</if>
+		</if>
+		LIMIT #{page.startRowNum} ,#{page.pageSize}
+	</select>
+
+
+	<select id="selectUserAndRoleByPage" resultMap="BaseResultMap" parameterType="map">
+		SELECT
+			user_id,
+			user_name,
+			user_pwd,
+			STATUS,
+			u.remark,
+			u.create_time,
+			u.update_time,
+			user_type,
+			u.role_id,
+			r.role_name
+		FROM t_user u,t_role r WHERE
+			u.role_id=r.role_id
+		<include refid="condition" />
+		<if test="params.orderByField != null and ''!=params.orderByField">
+			ORDER BY ${params.orderByField}
+			<if test="params.orderByField!= null and ''!=params.orderByField">
+				${params.orderType}
+			</if>
+		</if>
+		LIMIT #{params.startNo} ,#{params.size}
+	</select>
+
+	<!-- BaseCrud:Service.findByBiz -->
+	<select id="selectByParams" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM t_user WHERE 1=1
+		<include refid="condition" />
+	</select>
+
+	<!-- Mapper.getUser -->
+	<select id="getUser" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM t_user
+		WHERE USER_NAME = #{userName,jdbcType=VARCHAR}
+	</select>
+
+	<!--BaseCrud:Mapper.deleteByPrimaryKey -->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		DELETE FROM t_user
+		WHERE user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+
+	<!-- BaseCrud:Service.deleteById -->
+	<delete id="deleteByPrimarayKeyForModel" parameterType="com.wonhigh.i18n.ms.common.model.UserEntity">
+		DELETE FROM t_user
+		WHERE user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+
+	<!-- BaseCrud:Mapper.insert -->
+	<insert id="insert" parameterType="com.wonhigh.i18n.ms.common.model.UserEntity">
+		INSERT INTO t_user (user_id, user_name, user_pwd,
+		status, remark, create_time,
+		update_time,user_type,role_id)
+		VALUES (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},
+		#{userPwd,jdbcType=VARCHAR},
+		#{status,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+		#{updateTime,jdbcType=TIMESTAMP},#{userType,jdbcType=TINYINT},#{roleId,jdbcType=TINYINT})
+	</insert>
+
+	<!--BaseCrud:Service.add -->
+	<insert id="insertSelective" parameterType="com.wonhigh.i18n.ms.common.model.UserEntity">
+		INSERT INTO t_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="userPwd != null">
+				user_pwd,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="userType != null">
+				user_type,
+			</if>
+			<if test="roleId != null">
+				role_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userPwd != null">
+				#{userPwd,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userType != null">
+				#{userType,jdbcType=TINYINT},
+			</if>
+			<if test="roleId != null">
+				#{roleId,jdbcType=TINYINT},
+			</if>
+		</trim>
+	</insert>
+
+	<!--BaseCrud:Service.modifyById -->
+	<update id="updateByPrimaryKeySelective" parameterType="com.wonhigh.i18n.ms.common.model.UserEntity">
+		UPDATE t_user
+		<set>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userPwd != null">
+				user_pwd = #{userPwd,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userType != null">
+				user_type = #{userType,jdbcType=TINYINT},
+			</if>
+			<if test="roleId != null">
+				role_id = #{roleId,jdbcType=TINYINT},
+			</if>
+		</set>
+		WHERE user_id = #{userId,jdbcType=INTEGER}
+	</update>
+
+	<!--BaseCrud: Mapper.updateByPrimaryKey -->
+	<update id="updateByPrimaryKey" parameterType="com.wonhigh.i18n.ms.common.model.UserEntity">
+		UPDATE t_user
+		SET user_name = #{userName,jdbcType=VARCHAR},
+		user_pwd = #{userPwd,jdbcType=VARCHAR},
+		status = #{status,jdbcType=TINYINT},
+		remark = #{remark,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		user_type = #{userType,jdbcType=TINYINT},
+		role_id = #{roleId,jdbcType=TINYINT},
+		update_time = #{updateTime,jdbcType=TIMESTAMP}
+		WHERE user_id = #{userId,jdbcType=INTEGER}
+	</update>
+</mapper>

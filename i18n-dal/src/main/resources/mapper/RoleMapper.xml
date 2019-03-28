@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wonhigh.i18n.ms.dal.database.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.wonhigh.i18n.ms.common.model.RoleEntity">
+        <id column="role_id" property="roleId" jdbcType="INTEGER"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="enable" property="enable" jdbcType="TINYINT"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		role_id,
+		role_name,
+		enable,
+		remark,
+		create_time,
+		update_time
+	</sql>
+
+    <sql id="condition">
+        <if test="null!=params">
+            <if test="null!=params.queryCondition and ''!=params.queryCondition">
+                ${params.queryCondition}
+            </if>
+            <if test="params.roleName != null and params.roleName !=''">
+                and role_name like CONCAT(CONCAT('%',
+                #{params.roleName,jdbcType=VARCHAR}), '%')
+            </if>
+            <if test="params.roleId != null and params.roleId !=''">
+                and role_id like CONCAT(CONCAT('%', #{params.roleId,jdbcType=INTEGER}),
+                '%')
+            </if>
+            <if test="params.role_id != null and params.role_id  !=''">
+                and role_id = #{params.role_id,jdbcType=INTEGER}
+            </if>
+            <if test="params.enable != null">
+                and enable = #{params.enable,jdbcType=TINYINT}
+            </if>
+            <if test="params.remark != null and params.remark !=''">
+                and remark like CONCAT(CONCAT('%', #{params.remark,jdbcType=VARCHAR}),
+                '%')
+            </if>
+            <if test="params.createTime != null and params.createTime != ''">
+                and update_time <![CDATA[>= ]]>
+                #{params.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="params.updateTime != null and params.updateTime != ''">
+                and update_time <![CDATA[<= ]]>
+                #{params.updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </if>
+    </sql>
+
+    <!-- BaseCrud:Service.findById -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"
+            parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_role
+        WHERE role_id = #{roleId,jdbcType=INTEGER}
+    </select>
+
+    <!--BaseCrud:Service.findCount -->
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) as s FROM t_role WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <!--BaseCrud:findByPage -->
+    <select id="selectByPage" resultMap="BaseResultMap"
+            parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_role WHERE 1=1
+        <include refid="condition"/>
+        <if test="orderByField != null and ''!=orderByField">
+            ORDER BY ${orderByField}
+            <if test="orderByField">
+                ${orderBy}
+            </if>
+        </if>
+        LIMIT #{page.startRowNum} ,#{page.pageSize}
+    </select>
+
+    <!-- BaseCrud:Service.findByBiz -->
+    <select id="selectByParams" resultMap="BaseResultMap"
+            parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_role WHERE 1=1
+        <include refid="condition"/>
+    </select>
+
+    <!-- Mapper.getUser -->
+    <select id="getRole" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_role
+        WHERE role_name = #{roleName,jdbcType=VARCHAR}
+    </select>
+
+    <!--BaseCrud:Mapper.deleteByPrimaryKey -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		DELETE FROM t_role
+		WHERE role_id = #{roleId,jdbcType=INTEGER}
+	</delete>
+
+    <!-- BaseCrud:Service.deleteById -->
+    <delete id="deleteByPrimarayKeyForModel" parameterType="com.wonhigh.i18n.ms.common.model.RoleEntity">
+		DELETE FROM t_role
+		WHERE role_id = #{roleId,jdbcType=INTEGER}
+	</delete>
+
+    <!-- BaseCrud:Mapper.insert -->
+    <insert id="insert" parameterType="com.wonhigh.i18n.ms.common.model.RoleEntity">
+		INSERT INTO `t_role` (
+--             `role_id`,
+            `role_name`,
+            `enable`,
+            `remark`,
+            `create_time`,
+            `update_time`
+        )
+        VALUES
+            (
+--                 #{roleId,jdbcType=INTEGER},
+                #{roleName,jdbcType=VARCHAR},
+                #{enable,jdbcType=TINYINT},
+                #{remark,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP},
+                #{updateTime,jdbcType=TIMESTAMP}
+            );
+
+	</insert>
+
+    <!--BaseCrud:Service.add -->
+    <insert id="insertSelective" parameterType="com.wonhigh.i18n.ms.common.model.RoleEntity">
+        INSERT INTO t_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="enable != null">
+                enable,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="enable != null">
+                #{enable,jdbcType=TINYINT},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+
+    <!--BaseCrud:Service.modifyById -->
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wonhigh.i18n.ms.common.model.RoleEntity">
+        UPDATE t_role
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="enable != null">
+                enable = #{enable,jdbcType=TINYINT},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="createTime != null">-->
+                <!--create_time = #{createTime,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            <!--<if test="updateTime != null">-->
+                <!--update_time = #{updateTime,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            update_time = now(),
+        </set>
+        WHERE role_id = #{roleId,jdbcType=INTEGER}
+    </update>
+
+    <!--BaseCrud: Mapper.updateByPrimaryKey -->
+    <update id="updateByPrimaryKey" parameterType="com.wonhigh.i18n.ms.common.model.RoleEntity">
+		UPDATE t_role
+		SET role_name = #{roleName,jdbcType=VARCHAR},
+		enable = #{enable,jdbcType=TINYINT},
+		remark = #{remark,jdbcType=VARCHAR},
+-- 		create_time = #{createTime,jdbcType=TIMESTAMP},
+		update_time = now()
+		WHERE role_id = #{roleId,jdbcType=INTEGER}
+	</update>
+
+</mapper>

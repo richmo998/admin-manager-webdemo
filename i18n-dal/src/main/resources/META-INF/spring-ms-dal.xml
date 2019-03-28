@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	   xmlns:jee="http://www.springframework.org/schema/jee" 
+	   xmlns:tx="http://www.springframework.org/schema/tx" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+	                      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd         
+	                      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd         
+	                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+	             
+	             
+	<!-- 加载注解功能 -->
+	<aop:aspectj-autoproxy />
+	<context:spring-configured />
+	<context:annotation-config />
+	<tx:annotation-driven order="1"/>
+	
+	<!-- 加载base工程配置 -->
+	<import resource="classpath*:META-INF/spring-base-dal-db.xml" />
+	<import resource="classpath*:META-INF/spring-base-dal-redis.xml" />
+	
+	<context:property-placeholder location="file:/Users/richmo/work/code-resources/i18n-admin/i18n-admin-1.0.0/conf/i18n/ms/*.properties" ignore-unresolvable="true" ignore-resource-not-found="true" order="2" system-properties-mode="NEVER"/>
+	<context:property-placeholder location="file:/etc/wonhighconf/i18n-admin/*.properties" ignore-unresolvable="true" ignore-resource-not-found="true" order="2" system-properties-mode="NEVER"/>
+	
+	<!-- 扫描本工程bean -->
+	<context:component-scan base-package="com.wonhigh.i18n.ms.dal">
+	</context:component-scan>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- <property name="annotationClass" value="org.springframework.stereotype.Repository" 
+			/> -->
+		<property name="basePackage" value="com.wonhigh.i18n.ms.dal.database" />
+		<property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"></property>
+	</bean>
+	
+</beans>

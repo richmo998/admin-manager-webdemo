@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!--Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出 -->
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数 -->
+<configuration status="ERROR">
+
+	<Properties>
+
+		<!-- jvm 启动时 添加的参数 -Dlog.home="/template" -Dapp.name="template-druid" -->
+		<!-- 日志路径 -->
+		<!-- <Property name="LOG_HOME">${sys:log.home}</Property>
+		<Property name="APP_NAME">${sys:app.name}</Property>
+		-->
+		<Property name="LOG_HOME">d:/data/logs/wonhigh/dc/ms</Property>
+		<Property name="APP_NAME">local-oms</Property>
+		
+	</Properties>
+
+	<!--先定义所有的appender -->
+
+	<appenders>
+
+		<!--这个输出控制台的配置 -->
+
+		<console name="Console" target="SYSTEM_OUT">
+
+			<!--输出日志的格式 -->
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+		</console>
+
+
+
+		<!-- 所有的日志 -->
+
+		<RollingFile name="RollingFileAll" fileName="${LOG_HOME}/${APP_NAME}.log"
+
+filePattern="${LOG_HOME}/${APP_NAME}-%d{yyyy-MM-dd}-%i.log" >
+
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+			<Policies>
+
+				<TimeBasedTriggeringPolicy />
+
+				<SizeBasedTriggeringPolicy size="100MB" />
+
+			</Policies>
+
+			<!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了10 -->
+
+			<DefaultRolloverStrategy max="10">
+
+				<Delete basePath="${LOG_HOME}" maxDepth="1">    
+
+					<IfFileName glob="${APP_NAME}-*.log" />    
+
+					<IfLastModified age="30d" />    
+
+				</Delete>
+
+			</DefaultRolloverStrategy>
+
+		</RollingFile>
+		
+		<!-- 错误日志记录 -->
+		<RollingFile name="RollingFileError" fileName="${LOG_HOME}/${APP_NAME}-error.log"
+
+filePattern="${LOG_HOME}/${APP_NAME}-error-%d{yyyy-MM-dd}-%i.log" >
+
+			<Filters>
+
+				<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY" />
+
+			</Filters>
+
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+			<Policies>
+
+				<!-- interval 多久执行一次备份，单位为 RollingRandomAccessFile的属性filePattern中%d{yyyy-MM-dd}的最小时间单位，此处是天
+
+ interval="1"  modulate="true"
+
+-->
+
+				<TimeBasedTriggeringPolicy />
+
+				<SizeBasedTriggeringPolicy size="100MB" />
+
+			</Policies>
+
+			<!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了10 -->
+
+			<DefaultRolloverStrategy max="10">
+
+				<Delete basePath="${LOG_HOME}" maxDepth="1">    
+
+					<IfFileName glob="${APP_NAME}-error-*.log" />    
+
+					<IfLastModified age="30d" />
+
+				</Delete>
+
+			</DefaultRolloverStrategy>
+
+		</RollingFile>		
+		<!-- 短信回执日志 -->
+ 
+		<RollingFile name="RollingFileCallBack" fileName="${LOG_HOME}/${APP_NAME}-callBackLogger.log"
+
+filePattern="${LOG_HOME}/${APP_NAME}-callBackLogger-%d{yyyy-MM-dd}-%i.log">
+
+			<Filters>
+
+				<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY" />
+
+			</Filters>
+
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+			<Policies>
+
+				<TimeBasedTriggeringPolicy />
+
+				<SizeBasedTriggeringPolicy size="100MB" />
+
+			</Policies>
+
+
+			<DefaultRolloverStrategy max="10">
+
+				<Delete basePath="${LOG_HOME}" maxDepth="1">    
+
+					<IfFileName glob="${APP_NAME}-callBackLogger-*.log" />    
+
+					<IfLastModified age="30d" />
+
+				</Delete>
+
+			</DefaultRolloverStrategy>
+
+		</RollingFile>		
+		
+		<!-- 调用腾讯接口日志  -->
+
+		<RollingFile name="RollingFileCallSend" fileName="${LOG_HOME}/${APP_NAME}-sendLogger.log"
+
+filePattern="${LOG_HOME}/${APP_NAME}-sendLogger-%d{yyyy-MM-dd}-%i.log" >
+
+			<Filters>
+
+				<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY" />
+
+			</Filters>
+
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+			<Policies>
+
+				<TimeBasedTriggeringPolicy />
+
+				<SizeBasedTriggeringPolicy size="100MB" />
+
+			</Policies>
+
+
+			<DefaultRolloverStrategy max="10">
+
+				<Delete basePath="${LOG_HOME}" maxDepth="1">    
+
+					<IfFileName glob="${APP_NAME}-sendLogger-*.log" />    
+
+					<IfLastModified age="30d" />
+
+				</Delete>
+
+			</DefaultRolloverStrategy>
+
+		</RollingFile>		
+		
+		<!-- 调腾讯接口失败日志 -->
+		<RollingFile name="RollingFileCallQSMSFail" fileName="${LOG_HOME}/${APP_NAME}-callFailLogger.log"
+
+					 filePattern="${LOG_HOME}/${APP_NAME}-callFailLogger-%d{yyyy-MM-dd}-%i.log" >
+
+			<Filters>
+
+				<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY" />
+
+			</Filters>
+
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+			<Policies>
+
+				<TimeBasedTriggeringPolicy />
+
+				<SizeBasedTriggeringPolicy size="100MB" />
+
+			</Policies>
+
+
+			<DefaultRolloverStrategy max="10">
+
+				<Delete basePath="${LOG_HOME}" maxDepth="1">
+
+					<IfFileName glob="${APP_NAME}-callFailLogger-*.log" />
+
+					<IfLastModified age="30d" />
+
+				</Delete>
+
+			</DefaultRolloverStrategy>
+
+		</RollingFile>
+
+
+
+		<!-- 慢sql记录 -->
+
+		<RollingFile name="RollingFileSlowsql" fileName="${LOG_HOME}/${APP_NAME}-slowsql.log"
+
+filePattern="${LOG_HOME}/${APP_NAME}-slowsql-%d{yyyy-MM-dd}-%i.log">
+
+			<!-- 只记录WARN及以上的日志  -->
+
+			<ThresholdFilter level="WARN" onMatch="ACCEPT"
+
+onMismatch="DENY" />
+
+			<PatternLayout pattern="%d [%t] %-5p [%c] - %m%n" />
+
+			<Policies>
+
+				<TimeBasedTriggeringPolicy />
+
+				<SizeBasedTriggeringPolicy size="100MB" />
+
+			</Policies>
+
+			<!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了10 -->
+
+			<DefaultRolloverStrategy max="10">
+				<!-- 每天最多保留10个文件 -->
+
+				<Delete basePath="${LOG_HOME}" maxDepth="1">
+
+					<IfFileName glob="${APP_NAME}-slowsql-*.log" />    
+
+					<IfLastModified age="30d" />
+					<!-- 保留30天 -->
+
+				</Delete>
+
+			</DefaultRolloverStrategy>
+
+		</RollingFile>
+
+
+
+	</appenders>
+
+	<!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
+
+	<loggers>
+
+		<!--过滤掉spring和mybatis的一些无用的DEBUG信息 -->
+
+		<logger name="org.springframework" level="INFO"/>
+
+		<logger name="org.mybatis" level="INFO"/>
+
+		<!-- sql 日志记录  name 为包名 -->
+
+		<logger name="com.yougou.logistics.template" level="DEBUG" additivity="true"/>
+
+		<!-- druid 慢sql 日志记录 name 为包名 -->
+
+		<logger name="com.alibaba.druid.filter.stat" level="WARN" additivity="true">
+
+			<appender-ref ref="RollingFileSlowsql" />
+
+		</logger>
+
+		<root level="INFO">
+
+			<appender-ref ref="Console" />
+			<appender-ref ref="RollingFileAll" />
+			<appender-ref ref="RollingFileError" />
+			<appender-ref ref="RollingFileSlowsql" />
+
+			<appender-ref ref="RollingFileCallBack" />
+			<appender-ref ref="RollingFileCallQSMSFail" />
+			<appender-ref ref="RollingFileCallSend" />
+			
+		</root>
+
+	</loggers>
+
+</configuration>

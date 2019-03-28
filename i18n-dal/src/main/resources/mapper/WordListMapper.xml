@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wonhigh.i18n.ms.dal.database.WordListMapper">
+    <resultMap id="BaseResultMap" type="com.wonhigh.i18n.ms.common.model.WordList">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="word_type" property="wordType" jdbcType="VARCHAR"/>
+        <result column="sys_group" property="sysGroup" jdbcType="VARCHAR"/>
+        <result column="zh_cn" property="zhCn" jdbcType="VARCHAR"/>
+        <result column="zh_hk" property="zhHk" jdbcType="VARCHAR"/>
+        <result column="zh_en" property="zhEn" jdbcType="VARCHAR"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="create_user_id" property="createUserId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, word_type, sys_group, zh_cn, zh_hk, zh_en, create_user, create_user_id, create_time, 
+    update_user, update_time
+  </sql>
+
+    <sql id="condition">
+        <if test="null!=params">
+            <if test="null!=params.queryCondition and ''!=params.queryCondition">
+                ${params.queryCondition}
+            </if>
+            <if test="params.zhCn != null and params.zhCn !=''">
+                and zh_cn like CONCAT(CONCAT('%',
+                #{params.zhCn,jdbcType=VARCHAR}), '%')
+            </if>
+
+            <if test="params.id != null and params.id  !=''">
+                and id = #{params.id,jdbcType=DECIMAL}
+            </if>
+            <if test="params.wordType != null and params.wordType !=''">
+                and word_type = #{params.wordType,jdbcType=VARCHAR}
+            </if>
+            <if test="params.sysGroup != null and params.sysGroup !=''">
+                and sys_group = #{params.sysGroup,jdbcType=VARCHAR}
+            </if>
+            <if test="params.zhHk != null and params.zhHk !=''">
+                and zh_hk like CONCAT(CONCAT('%',
+                #{params.zhHk,jdbcType=VARCHAR}), '%')
+            </if>
+            <if test="params.zhEn != null and params.zhEn !=''">
+                and zh_en like CONCAT(CONCAT('%',
+                #{params.zhEn,jdbcType=VARCHAR}), '%')
+            </if>
+            <if test="params.createTime != null and params.createTime != ''">
+                and update_time <![CDATA[>= ]]>
+                #{params.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="params.updateTime != null and params.updateTime != ''">
+                and update_time <![CDATA[<= ]]>
+                #{params.updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </if>
+    </sql>
+
+    <!--BaseCrud:Service.findCount -->
+    <select id="selectCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) as s FROM word_list WHERE 1=1
+        <include refid="condition" />
+    </select>
+
+    <!--BaseCrud:findByPage -->
+    <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM word_list WHERE 1=1
+        <include refid="condition" />
+        <if test="orderByField != null and ''!=orderByField">
+            ORDER BY ${orderByField}
+            <if test="orderByField">
+                ${orderBy}
+            </if>
+        </if>
+        LIMIT #{page.startRowNum} ,#{page.pageSize}
+    </select>
+
+    <select id="selectWordsForList" resultMap="BaseResultMap" parameterType="com.wonhigh.i18n.ms.common.model.WordList">
+        select
+        <include refid="Base_Column_List"/>
+        from word_list
+        where 1=1
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="wordType != null">
+            AND word_type = #{wordType}
+        </if>
+        <if test="sysGroup != null">
+            AND sys_group = #{sysGroup}
+        </if>
+        <if test="zhCn != null">
+            AND zh_cn = #{zhCn}
+        </if>
+
+    </select>
+
+    <select id="selectMyCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select
+        count(id)
+        from word_list
+        where 1=1
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="wordType != null">
+            AND word_type = #{wordType}
+        </if>
+        <if test="sysGroup != null">
+            AND sys_group = #{sysGroup}
+        </if>
+        <if test="zhCn != null">
+            AND zh_cn = #{zhCn}
+        </if>
+        <if test="createTime != null">
+            AND create_time <![CDATA[   >= ]]> #{createTime}
+        </if>
+        <if test="createTimeEnd != null">
+            AND create_time <![CDATA[   <= ]]> #{createTimeEnd}
+        </if>
+        <if test="updateTime != null">
+            AND updateTime <![CDATA[   >= ]]> #{updateTime}
+        </if>
+        <if test="updateTimeEnd != null">
+            AND updateTime <![CDATA[   <= ]]> #{updateTimeEnd}
+        </if>
+    </select>
+
+    <select id="selectWordsByPages" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from word_list
+        where 1=1
+        <if test="params.id != null">
+            AND id = #{id}
+        </if>
+        <if test="params.wordType != null">
+            AND word_type = #{wordType}
+        </if>
+        <if test="params.sysGroup != null">
+            AND sys_group = #{sysGroup}
+        </if>
+        <if test="params.zhCn != null">
+            AND zh_cn = #{zhCn}
+        </if>
+        <if test="params.createTime != null">
+            AND create_time <![CDATA[   >= ]]> #{createTime}
+        </if>
+        <if test="params.createTimeEnd != null">
+            AND create_time <![CDATA[   <= ]]> #{createTimeEnd}
+        </if>
+        <if test="params.updateTime != null">
+            AND updateTime <![CDATA[   >= ]]> #{updateTime}
+        </if>
+        <if test="params.updateTimeEnd != null">
+            AND updateTime <![CDATA[   <= ]]> #{updateTimeEnd}
+        </if>
+        limit #{page.pageNo},#{page.pageSize}
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from word_list
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectBySimpleChineseKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from word_list
+        where word_type = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from word_list
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insert" parameterType="com.wonhigh.i18n.ms.common.model.WordList">
+    insert into word_list (id, word_type, sys_group, 
+      zh_cn, zh_hk, zh_en, create_user, 
+      create_user_id, create_time, update_user, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{wordType,jdbcType=VARCHAR}, #{sysGroup,jdbcType=VARCHAR}, 
+      #{zhCn,jdbcType=VARCHAR}, #{zhHk,jdbcType=VARCHAR}, #{zhEn,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createUserId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+    <insert id="insertSelective" parameterType="com.wonhigh.i18n.ms.common.model.WordList">
+        insert into word_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="wordType != null">
+                word_type,
+            </if>
+            <if test="sysGroup != null">
+                sys_group,
+            </if>
+            <if test="zhCn != null">
+                zh_cn,
+            </if>
+            <if test="zhHk != null">
+                zh_hk,
+            </if>
+            <if test="zhEn != null">
+                zh_en,
+            </if>
+            <if test="createUser != null">
+                create_user,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="wordType != null">
+                #{wordType,jdbcType=VARCHAR},
+            </if>
+            <if test="sysGroup != null">
+                #{sysGroup,jdbcType=VARCHAR},
+            </if>
+            <if test="zhCn != null">
+                #{zhCn,jdbcType=VARCHAR},
+            </if>
+            <if test="zhHk != null">
+                #{zhHk,jdbcType=VARCHAR},
+            </if>
+            <if test="zhEn != null">
+                #{zhEn,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wonhigh.i18n.ms.common.model.WordList">
+        update word_list
+        <set>
+            <if test="wordType != null">
+                word_type = #{wordType,jdbcType=VARCHAR},
+            </if>
+            <if test="sysGroup != null">
+                sys_group = #{sysGroup,jdbcType=VARCHAR},
+            </if>
+            <if test="zhCn != null">
+                zh_cn = #{zhCn,jdbcType=VARCHAR},
+            </if>
+            <if test="zhHk != null">
+                zh_hk = #{zhHk,jdbcType=VARCHAR},
+            </if>
+            <if test="zhEn != null">
+                zh_en = #{zhEn,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                create_user_id = #{createUserId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wonhigh.i18n.ms.common.model.WordList">
+    update word_list
+    set word_type = #{wordType,jdbcType=VARCHAR},
+      sys_group = #{sysGroup,jdbcType=VARCHAR},
+      zh_cn = #{zhCn,jdbcType=VARCHAR},
+      zh_hk = #{zhHk,jdbcType=VARCHAR},
+      zh_en = #{zhEn,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_user_id = #{createUserId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

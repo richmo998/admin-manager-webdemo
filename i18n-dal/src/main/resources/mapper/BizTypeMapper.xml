@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wonhigh.i18n.ms.dal.database.BizTypeMapper">
+	<resultMap id="ResultMap" type="com.wonhigh.i18n.ms.common.model.BizTypeEntity">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="biz_no" property="bizNo" jdbcType="VARCHAR" />
+		<result column="biz_name" property="bizName" jdbcType="VARCHAR" />
+		<result column="msg_receiver" property="msgReceiver" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="bizNameAndNo" property="bizNameAndNo" jdbcType="VARCHAR" />
+		<result column="enable" property="enable" jdbcType="TINYINT" />
+		<result column="sms_type" property="smsType" jdbcType="VARCHAR" />
+		<result column="sign_type" property="signType" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="condition">
+		<if test="params != null">
+			<if test="params.bizNo != null and params.bizNo != ''">
+				and biz_no = #{params.bizNo}
+			</if>
+            <if test="params.userName != null and params.userName != ''">
+                and user_name = #{params.userName}
+            </if>
+			<if test="params.bizName != null and params.bizName != ''">
+				and biz_name like CONCAT(CONCAT('%', #{params.bizName}),'%')
+			</if>
+			<if test="params.msgReceiver != null and params.msgReceiver != ''">
+				and find_in_set(#{params.msgReceiver}, msg_receiver)
+			</if>
+			<if test="params.filter00 != null and params.filter00 != ''">
+				and biz_no != '00'
+			</if>
+			<if test="params.enable != null ">
+				and enable = #{params.enable}
+			</if>
+			<if test="params.smsType != null and params.smsType != ''">
+				and sms_type like CONCAT(CONCAT('%', #{params.smsType}),'%')
+			</if>
+			<if test="params.signType != null and params.signType != ''">
+				and sign_type like CONCAT(CONCAT('%', #{params.signType}),'%')
+			</if>
+		</if>
+	</sql>
+	
+	<select id="count" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(*) from t_biz_type
+		where 1=1
+		<include refid="condition" />
+	</select>
+	
+	<select id="list" resultMap="ResultMap" parameterType="java.util.Map">
+		select id,biz_no,biz_name,msg_receiver,description,create_time,update_time,user_name,enable,sms_type,sign_type
+		from t_biz_type
+		where 1=1
+		<include refid="condition" />
+		ORDER BY create_time desc
+        <if test="params.index != null and params.size != null">
+            limit #{params.index},#{params.size}
+        </if>
+
+	</select>
+	
+	<insert id="save" parameterType="com.wonhigh.i18n.ms.common.model.BizTypeEntity">
+		insert into t_biz_type(
+			biz_no,
+			biz_name,
+			msg_receiver,
+			user_name,
+			description,
+			enable,
+			sms_type,
+			sign_type
+			)
+		value(
+			#{bizNo},
+			#{bizName},
+			#{msgReceiver},
+			#{userName},
+			#{description},
+			#{enable},
+			#{smsType},
+			#{signType}
+			)
+	</insert>
+	
+	<delete id="remove" parameterType="com.wonhigh.i18n.ms.common.model.BizTypeEntity">
+		delete from t_biz_type
+		where id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.wonhigh.i18n.ms.common.model.BizTypeEntity">
+		update t_biz_type
+		set 
+			biz_name=#{bizName},
+			msg_receiver=#{msgReceiver},
+			description=#{description},
+			enable=#{enable},
+			sms_type=#{smsType},
+			sign_type=#{signType}
+		where id=#{id}
+	</update>
+</mapper>

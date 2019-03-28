@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- 加载依赖service层配置 -->
+	<import resource="classpath:META-INF/spring-ms-service.xml" />
+	<!--<import resource="classpath:META-INF/spring-ms-email.xml"/>-->
+	
+	
+	<!-- 扫描本工程bean-->
+	<context:component-scan base-package="com.wonhigh.i18n.ms.manager">
+	</context:component-scan>
+	
+    <!-- 调度线程池数 -->
+    <task:scheduler id="scheduler" pool-size="30" />  
+    <task:annotation-driven  scheduler="scheduler" />  
+    
+    <!-- *************************redis****************************** -->
+  	<!-- jedis 配置 -->  
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig" >  
+          <property name="maxIdle" value="${redis.conf.maxIdle}" />  
+          <property name="maxWait" value="${redis.conf.maxWait}" />  
+          <property name="testOnBorrow" value="${redis.conf.testOnBorrow}" />
+          <!-- <property name="maxTotal" value="${redis.conf.maxActive}" />   -->
+    </bean >  
+  	<!-- redis服务器中心 -->  
+    <bean id="connectionFactory"  class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" >  
+          <property name="poolConfig" ref="poolConfig" />  
+          <property name="port" value="${redis.port}" />  
+          <property name="hostName" value="${redis.host}" />  
+          <property name="password" value="${redis.pass}" />  
+          <property name="timeout" value="${redis.conf.timeout}" ></property>  
+    </bean >  
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" >  
+          <property name="connectionFactory" ref="connectionFactory" />  
+          <property name="keySerializer" >  
+              <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />  
+          </property>  
+          <!-- <property name="valueSerializer" >  
+              <bean class="org.springframework.data.redis.serializer.JacksonJsonRedisSerializer" />  
+          </property>   -->
+    </bean >
+    <bean id="redisUtil" class="com.wonhigh.i18n.ms.common.utils.RedisUtil" >
+          <property name="redisTemplate" ref="redisTemplate" />
+          <property name="redisIntegerTemplate" ref="redisTemplate" />
+    </bean >  
+    
+    <!-- spring thread pool executor -->           
+      <!--<bean id="smsSendMsgTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">-->
+          <!--&lt;!&ndash; 线程池维护线程的最少数量 &ndash;&gt;-->
+          <!--<property name="corePoolSize" value="${sms.threadPool.corePoolSize}" />-->
+          <!--&lt;!&ndash; 允许的空闲时间 &ndash;&gt;-->
+          <!--<property name="keepAliveSeconds" value="200" />-->
+          <!--&lt;!&ndash; 线程池维护线程的最大数量 &ndash;&gt;-->
+          <!--<property name="maxPoolSize" value="${sms.threadPool.maxPoolSize}" />-->
+          <!--&lt;!&ndash; 缓存队列 &ndash;&gt;-->
+         <!--<property name="queueCapacity" value="${sms.threadPool.queueCapacity}" />-->
+         <!--&lt;!&ndash; 对拒绝task的处理策略 &ndash;&gt;-->
+         <!--<property name="rejectedExecutionHandler">-->
+             <!--<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />-->
+         <!--</property>-->
+     <!--</bean>-->
+
+
+     <!--<bean id="smsProcessRespTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">-->
+          <!--&lt;!&ndash; 线程池维护线程的最少数量 &ndash;&gt;-->
+          <!--<property name="corePoolSize" value="${sms.threadPool.corePoolSize}" />-->
+          <!--&lt;!&ndash; 允许的空闲时间 &ndash;&gt;-->
+          <!--<property name="keepAliveSeconds" value="200" />-->
+          <!--&lt;!&ndash; 线程池维护线程的最大数量 &ndash;&gt;-->
+          <!--<property name="maxPoolSize" value="${sms.threadPool.maxPoolSize}" />-->
+          <!--&lt;!&ndash; 缓存队列 &ndash;&gt;-->
+         <!--<property name="queueCapacity" value="${sms.threadPool.queueCapacity}" />-->
+         <!--&lt;!&ndash; 对拒绝task的处理策略 &ndash;&gt;-->
+         <!--<property name="rejectedExecutionHandler">-->
+             <!--<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />-->
+         <!--</property>-->
+     <!--</bean>-->
+     
+     <!--<bean id="voiceSendMsgTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">-->
+          <!--&lt;!&ndash; 线程池维护线程的最少数量 &ndash;&gt;-->
+          <!--<property name="corePoolSize" value="${sms.threadPool.corePoolSize}" />-->
+          <!--&lt;!&ndash; 允许的空闲时间 &ndash;&gt;-->
+          <!--<property name="keepAliveSeconds" value="200" />-->
+          <!--&lt;!&ndash; 线程池维护线程的最大数量 &ndash;&gt;-->
+          <!--<property name="maxPoolSize" value="${sms.threadPool.maxPoolSize}" />-->
+          <!--&lt;!&ndash; 缓存队列 &ndash;&gt;-->
+         <!--<property name="queueCapacity" value="${sms.threadPool.queueCapacity}" />-->
+         <!--&lt;!&ndash; 对拒绝task的处理策略 &ndash;&gt;-->
+         <!--<property name="rejectedExecutionHandler">-->
+             <!--<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />-->
+         <!--</property>-->
+     <!--</bean>-->
+     <!---->
+     
+     
+     
+    
+</beans>

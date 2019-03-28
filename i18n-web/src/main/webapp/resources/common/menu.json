@@ -1,0 +1,109 @@
+[
+  {
+    "parentId": 1,
+    "menuLevel": 2,
+    "state": "open",
+    "systemId": 111,
+    "systemName": null,
+    "childrenCount": 0,
+    "menuCode": null,
+    "attributes": {},
+    "id": 111,
+    "text": "多语言词库管理系统",
+    "remark": null,
+    "order": 1,
+    "isLeaf": "false",
+    "children": [
+      {
+        "parentId": 111,
+        "menuLevel": null,
+        "state": "open",
+        "systemId": 111,
+        "systemName": "多语言词库管理系统",
+        "childrenCount": 0,
+        "menuCode": "1",
+        "attributes": {},
+        "id": 54999,
+        "text": "系统管理",
+        "remark": "",
+        "order": 1,
+        "isLeaf": "true",
+        "children": [
+          
+          {
+            "parentId": null,
+            "menuLevel": null,
+            "state": "open",
+            "systemId": null,
+            "systemName": null,
+            "childrenCount": 0,
+            "menuCode": null,
+            "attributes": {
+              "url": "to_userdetail"
+            },
+            "id": 2618,
+            "text": "用户管理",
+            "remark": null,
+            "order": null,
+            "isLeaf": null,
+            "children": null
+          },
+          {
+            "parentId": null,
+            "menuLevel": null,
+            "state": "open",
+            "systemId": null,
+            "systemName": null,
+            "childrenCount": 0,
+            "menuCode": null,
+            "attributes": {
+              "url": "to_word_list"
+            },
+            "id": 2616,
+            "text": "词库管理",
+            "remark": null,
+            "order": null,
+            "isLeaf": null,
+            "children": null
+          },
+          {
+            "parentId": null,
+            "menuLevel": null,
+            "state": "open",
+            "systemId": null,
+            "systemName": null,
+            "childrenCount": 0,
+            "menuCode": null,
+            "attributes": {
+              "url": "to_word_translate"
+            },
+            "id": 2650,
+            "text": "词条翻译",
+            "remark": null,
+            "order": null,
+            "isLeaf": null,
+            "children": null
+          },
+          {
+            "parentId": null,
+            "menuLevel": null,
+            "state": "open",
+            "systemId": null,
+            "systemName": null,
+            "childrenCount": 0,
+            "menuCode": null,
+            "attributes": {
+              "url": "to_word_list_log"
+            },
+            "id": 2653,
+            "text": "系统日志",
+            "remark": null,
+            "order": null,
+            "isLeaf": null,
+            "children": null
+          }
+        ]
+      }
+    ]
+  }
+]
