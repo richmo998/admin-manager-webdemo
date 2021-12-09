@@ -4,11 +4,7 @@ import java.io.Serializable;
 
 /**
  * 对外API 公共参数
- * 
- * @author tan.yf
- * @date 2017年6月6日 上午10:57:40
- * @version 0.1.0 
- * @copyright wonhigh.cn
+
  */
 public class PublicApiVo implements Serializable{
 	private static final long serialVersionUID = 1L;
