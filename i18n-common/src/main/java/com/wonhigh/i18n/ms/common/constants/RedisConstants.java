@@ -2,11 +2,6 @@ package com.wonhigh.i18n.ms.common.constants;
 
 /**
  * redis的Key的常量值
- * 
- * @author yang.zh
- * @date 2018年7月31日 下午2:51:28
- * @version 0.1.0 
- * @copyright wonhigh.cn
  */
 public class RedisConstants {
 	/**
