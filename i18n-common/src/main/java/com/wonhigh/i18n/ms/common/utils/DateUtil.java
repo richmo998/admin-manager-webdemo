@@ -8,11 +8,6 @@ import org.joda.time.DateTime;
 
 /**
  * 日期工具类
- * 
- * @author tan.yf
- * @date 2017年6月6日 下午2:09:23
- * @version 0.1.0
- * @copyright wonhigh.cn
  */
 public class DateUtil {
 
